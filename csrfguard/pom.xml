@@ -9,7 +9,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.wso2.org.owasp</groupId>
 	<artifactId>csrfguard</artifactId>
-	<version>3.1.0-wso2v1-SNAPSHOT</version>
+	<version>3.1.0-wso2v1</version>
 	<packaging>jar</packaging>
 	<name>OWASP CSRFGuard</name>
 	<description>OWASP CSRFGuard is a library that implements a variant of the synchronizer token pattern to mitigate the risk of Cross-Site Request Forgery (CSRF) attacks.</description>
@@ -29,7 +29,7 @@
 		<url>https://github.com/wso2/wso2-OWASP-CSRFGuard.git</url>
 		<developerConnection>scm:git:https://github.com/wso2/wso2-OWASP-CSRFGuard.git</developerConnection>
 		<connection>scm:git:https://github.com/wso2/wso2-OWASP-CSRFGuard.git</connection>
-		<tag>HEAD</tag>
+		<tag>v3.1.0-wso2v1</tag>
 	</scm>
 
 	<developers>
