@@ -17,10 +17,6 @@
 			<url>http://www.opensource.org/licenses/bsd-license.php</url>
 		</license>
 	</licenses>
-	<scm>
-		<url>https://github.com/esheri3/OWASP-CSRFGuard</url>
-		<connection>https://github.com/esheri3/OWASP-CSRFGuard.git</connection>
-	</scm>
 	<developers>
 		<developer>
 			<id>esheri3</id>
