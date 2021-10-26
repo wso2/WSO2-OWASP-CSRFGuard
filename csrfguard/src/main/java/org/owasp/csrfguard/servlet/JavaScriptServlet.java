@@ -28,9 +28,13 @@
  */
 package org.owasp.csrfguard.servlet;
 
+import org.owasp.csrfguard.CsrfGuard;
+import org.owasp.csrfguard.CsrfGuardServletContextListener;
+import org.owasp.csrfguard.log.LogLevel;
+import org.owasp.csrfguard.util.CsrfGuardUtils;
+import org.owasp.csrfguard.util.Strings;
+
 import java.io.IOException;
-import java.io.OutputStream;
-import java.io.PrintWriter;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
@@ -42,14 +46,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-
-import org.owasp.csrfguard.CsrfGuard;
-import org.owasp.csrfguard.CsrfGuardServletContextListener;
-import org.owasp.csrfguard.log.LogLevel;
-import org.owasp.csrfguard.util.CsrfGuardUtils;
-import org.owasp.csrfguard.util.Streams;
-import org.owasp.csrfguard.util.Strings;
-import org.owasp.csrfguard.util.Writers;
 
 public final class JavaScriptServlet extends HttpServlet {
 
@@ -74,7 +70,9 @@ public final class JavaScriptServlet extends HttpServlet {
 	private static final String INJECT_INTO_ATTRIBUTES_IDENTIFIER = "%INJECT_ATTRIBUTES%";
 	
 	private static final String CONTEXT_PATH_IDENTIFIER = "%CONTEXT_PATH%";
-	
+
+	private static final String CONTEXT_PATH_PARAM = "contextPath";
+
 	private static final String SERVLET_PATH_IDENTIFIER = "%SERVLET_PATH%";
 	
 	private static final String X_REQUESTED_WITH_IDENTIFIER = "%X_REQUESTED_WITH%";
@@ -207,6 +205,18 @@ public final class JavaScriptServlet extends HttpServlet {
 
 		/** build dynamic javascript **/
 		String code = CsrfGuard.getInstance().getJavascriptTemplateCode();
+		String contextPath = servletConfig.getServletContext().getInitParameter(CONTEXT_PATH_PARAM);
+		if (contextPath != null && contextPath != "") {
+			if (contextPath.trim().charAt(0) != '/') {
+				contextPath = "/" + contextPath;
+			}
+			if (contextPath.trim().charAt(contextPath.length() - 1) == '/') {
+				contextPath = contextPath.substring(0, contextPath.length() - 1);
+			}
+			contextPath = contextPath.trim();
+		} else {
+			contextPath = request.getContextPath();
+		}
 
 		code = code.replace(TOKEN_NAME_IDENTIFIER, CsrfGuardUtils.defaultString(csrfGuard.getTokenName()));
 		code = code.replace(TOKEN_VALUE_IDENTIFIER, CsrfGuardUtils.defaultString((String) session.getAttribute(csrfGuard.getSessionKey())));
@@ -219,7 +229,7 @@ public final class JavaScriptServlet extends HttpServlet {
 		code = code.replace(DOMAIN_ORIGIN_IDENTIFIER, CsrfGuardUtils.defaultString(parseDomain(request.getRequestURL())));
 		code = code.replace(DOMAIN_STRICT_IDENTIFIER, Boolean.toString(csrfGuard.isJavascriptDomainStrict()));
 		code = code.replace(CONTEXT_PATH_IDENTIFIER, CsrfGuardUtils.defaultString(request.getContextPath()));
-		code = code.replace(SERVLET_PATH_IDENTIFIER, CsrfGuardUtils.defaultString(request.getContextPath() + request.getServletPath()));
+		code = code.replace(SERVLET_PATH_IDENTIFIER, CsrfGuardUtils.defaultString(contextPath + request.getServletPath()));
 		code = code.replace(X_REQUESTED_WITH_IDENTIFIER, CsrfGuardUtils.defaultString(csrfGuard.getJavascriptXrequestedWith()));
 
 		/** write dynamic javascript **/
